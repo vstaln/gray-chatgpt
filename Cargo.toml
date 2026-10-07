@@ -5,6 +5,10 @@ edition = "2024"
 rust-version = "1.91"
 license = "MIT"
 description = "Sign in with ChatGPT (plan usage) provider plugin for the gray agent harness"
+authors = ["Daniel Ou"]
+repository = "https://github.com/DanielOu1208/gray-chatgpt"
+homepage = "https://github.com/DanielOu1208/gray-chatgpt"
+keywords = ["gray", "plugin", "chatgpt", "oauth", "agent"]
 
 [lib]
 name = "gray_chatgpt"
