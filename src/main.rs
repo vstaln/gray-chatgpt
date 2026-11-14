@@ -20,7 +20,8 @@ use serde_json::{Value, json};
 
 #[derive(Deserialize)]
 struct Request {
-    id: Value,
+    #[serde(default)]
+    id: Option<Value>,
     method: String,
     #[serde(default)]
     params: Option<Value>,
@@ -116,10 +117,12 @@ async fn serve() -> anyhow::Result<()> {
         };
         let params = request.params.clone().unwrap_or_else(|| json!({}));
         let outcome = handle(&ctx, &request.method, params).await;
-        // Protocol frames only: never log tokens or upstream bodies.
-        let frame = serde_json::to_string(&wire::reply(request.id, outcome))?;
-        writeln!(stdout, "{frame}")?;
-        stdout.flush()?;
+        if let Some(id) = request.id.clone() {
+            // Protocol frames only: never log tokens or upstream bodies.
+            let frame = serde_json::to_string(&wire::reply(id, outcome))?;
+            writeln!(stdout, "{frame}")?;
+            stdout.flush()?;
+        }
         if request.method == "plugin/shutdown" {
             return Ok(());
         }
