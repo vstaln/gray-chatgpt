@@ -25,19 +25,20 @@ After you approve, the browser lands on a small Gray-branded page served by the 
 
 ## Install
 
-Prebuilt binaries for macOS (Apple Silicon and Intel) and Linux (x86-64 and ARM64, static) are attached to every [release](https://github.com/DanielOu1208/gray-chatgpt/releases), each with a `.sha256`:
+The plugin is in gray's own index, so this installs the build for your platform and checks its sha256:
 
 ```sh
-case "$(uname -s)-$(uname -m)" in
-  Darwin-arm64)  target=aarch64-apple-darwin ;;
-  Darwin-x86_64) target=x86_64-apple-darwin ;;
-  Linux-x86_64)  target=x86_64-unknown-linux-musl ;;
-  Linux-aarch64) target=aarch64-unknown-linux-musl ;;
-esac
-curl -fsSLo ~/.local/bin/gray-chatgpt \
-  "https://github.com/DanielOu1208/gray-chatgpt/releases/latest/download/gray-chatgpt-$target"
-chmod +x ~/.local/bin/gray-chatgpt
-gray plugin install chatgpt   # finds gray-chatgpt on PATH
+gray plugin install chatgpt
+```
+
+To install the release by hand instead, take it from its [releases page](https://github.com/vstaln/gray-chatgpt/releases). Every release ships `gray-chatgpt-<version>.tar.gz` and a matching `.sha256`; the tarball holds `plugin.sh` and one directory per target: macOS (`aarch64-apple-darwin`, `x86_64-apple-darwin`), Linux (`x86_64-unknown-linux-musl`, `aarch64-unknown-linux-musl`, both static) and Windows (`x86_64-pc-windows-msvc`).
+
+```sh
+mkdir gray-chatgpt && cd gray-chatgpt
+gh release download --repo vstaln/gray-chatgpt --pattern 'gray-chatgpt-*.tar.gz*'
+shasum -a 256 -c gray-chatgpt-*.tar.gz.sha256
+tar -xzf gray-chatgpt-*.tar.gz
+gray plugin install ./plugin.sh   # plugin.sh picks the build for this platform
 ```
 
 Run the install from an interactive terminal and approve the `provider.credentials` capability. That's how gray lets a plugin offer a provider and hold its login.
@@ -75,6 +76,7 @@ The tests mock OpenAI's endpoints, including a full sign-in with a signed ID tok
 
 - **[gray](https://github.com/vstaln/gray)** by Vstalin Grady ([@vstaln](https://github.com/vstaln)): the agent harness, its plugin protocol, and the `gray-plugin` and `gray-core` crates this plugin builds on.
 - The login plumbing (loopback callback, login operation manager, sidecar request loop) is adapted from his [gray-codex-sub](https://github.com/vstaln/gray-codex-sub) (MIT). His copyright notice is kept in [LICENSE](LICENSE).
+- **Original plugin by Daniel Ou** ([@DanielOu1208](https://github.com/DanielOu1208)): the initial OpenAI sign-in implementation, this documentation and the release pipeline, brought into the gray plugin family from [DanielOu1208/gray-chatgpt](https://github.com/DanielOu1208/gray-chatgpt) (MIT). His copyright notice is kept in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 - The Gray name and the mark on the sign-in page belong to the gray project.
 
 This is a community plugin. It isn't affiliated with or endorsed by OpenAI, and ChatGPT is a trademark of OpenAI.
